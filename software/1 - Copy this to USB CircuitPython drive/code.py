@@ -22,50 +22,79 @@ import microcontroller
 from commandhandler import CommandHandler
 
 __version__ = '1.0.0'
-__date__ = 'Oct 2024'
+__date__ = 'Jul 2026'
 
 usb_interface = USBSerialInterface(console_or_data = 'console', echo = False)
 
+out_en = board.GP1 # Note in this design, all of the output channels share the same out_en signal
+sclk   = board.GP2
+sdin   = board.GP3
+sdo    = board.GP0
 
 handler = CommandHandler()
-vs1 = AD5781(
-    spi_clock_speed = 1000000,
-    relay_pin = board.GP14,
-    spi_clock_pin =  board.GP2,
-    spi_mosi_pin =  board.GP3,
-    spi_miso_pin =  board.GP0,
-    spi_cs_pin =  board.GP1)
-    
-vs2 = AD5781(
-    spi_clock_speed = 1000000,
-    relay_pin = board.GP13,
-    spi_clock_pin =  board.GP2,
-    spi_mosi_pin =  board.GP3,
-    spi_miso_pin =  board.GP0,
-    spi_cs_pin =  board.GP4)
+vs1_1 = AD5781(cs=board.GP29, clk_speed=1e6, out_en=out_en, sclk=sclk, sdin=sdin, sdo=sdo)
+vs1_2 = AD5781(cs=board.GP23, clk_speed=1e6, out_en=out_en, sclk=sclk, sdin=sdin, sdo=sdo)
+vs1_3 = AD5781(cs=board.GP4 , clk_speed=1e6, out_en=out_en, sclk=sclk, sdin=sdin, sdo=sdo)
+vs1_4 = AD5781(cs=board.GP10, clk_speed=1e6, out_en=out_en, sclk=sclk, sdin=sdin, sdo=sdo)
+vs2_1 = AD5781(cs=board.GP28, clk_speed=1e6, out_en=out_en, sclk=sclk, sdin=sdin, sdo=sdo)
+vs2_2 = AD5781(cs=board.GP22, clk_speed=1e6, out_en=out_en, sclk=sclk, sdin=sdin, sdo=sdo)
+vs2_3 = AD5781(cs=board.GP5 , clk_speed=1e6, out_en=out_en, sclk=sclk, sdin=sdin, sdo=sdo)
+vs2_4 = AD5781(cs=board.GP11, clk_speed=1e6, out_en=out_en, sclk=sclk, sdin=sdin, sdo=sdo)
+vs3_1 = AD5781(cs=board.GP27, clk_speed=1e6, out_en=out_en, sclk=sclk, sdin=sdin, sdo=sdo)
+vs3_2 = AD5781(cs=board.GP22, clk_speed=1e6, out_en=out_en, sclk=sclk, sdin=sdin, sdo=sdo)
+vs3_3 = AD5781(cs=board.GP6 , clk_speed=1e6, out_en=out_en, sclk=sclk, sdin=sdin, sdo=sdo)
+vs3_4 = AD5781(cs=board.GP12, clk_speed=1e6, out_en=out_en, sclk=sclk, sdin=sdin, sdo=sdo)
+vs4_1 = AD5781(cs=board.GP26, clk_speed=1e6, out_en=out_en, sclk=sclk, sdin=sdin, sdo=sdo)
+vs4_2 = AD5781(cs=board.GP20, clk_speed=1e6, out_en=out_en, sclk=sclk, sdin=sdin, sdo=sdo)
+vs4_3 = AD5781(cs=board.GP7 , clk_speed=1e6, out_en=out_en, sclk=sclk, sdin=sdin, sdo=sdo)
+vs4_4 = AD5781(cs=board.GP13, clk_speed=1e6, out_en=out_en, sclk=sclk, sdin=sdin, sdo=sdo)
+vs5_1 = AD5781(cs=board.GP25, clk_speed=1e6, out_en=out_en, sclk=sclk, sdin=sdin, sdo=sdo)
+vs5_2 = AD5781(cs=board.GP19, clk_speed=1e6, out_en=out_en, sclk=sclk, sdin=sdin, sdo=sdo)
+vs5_3 = AD5781(cs=board.GP8 , clk_speed=1e6, out_en=out_en, sclk=sclk, sdin=sdin, sdo=sdo)
+vs5_4 = AD5781(cs=board.GP14, clk_speed=1e6, out_en=out_en, sclk=sclk, sdin=sdin, sdo=sdo)
+  
 
-vs3 = AD5781(
-    spi_clock_speed = 1000000,
-    relay_pin = board.GP12,
-    spi_clock_pin =  board.GP2,
-    spi_mosi_pin =  board.GP3,
-    spi_miso_pin =  board.GP0,
-    spi_cs_pin =  board.GP5)
-
-vs4 = AD5781(
-    spi_clock_speed = 1000000,
-    relay_pin = board.GP11,
-    spi_clock_pin =  board.GP2,
-    spi_mosi_pin =  board.GP3,
-    spi_miso_pin =  board.GP0,
-    spi_cs_pin =  board.GP6)
-
-vs_list = {1: vs1, 2: vs2, 3: vs3, 4: vs4}
+""" vs_list is indexed by the dsub connector pin number. """
+vs_list = {
+    1  : vs1_1, 
+    2  : vs1_2, 
+    #3 : GND
+    4  : vs1_3, 
+    5  : vs1_4,
+    6  : vs2_1,
+    7  : vs2_2,
+    #8 : GND
+    9  : vs2_3,
+    10 : vs2_4,
+    11 : vs3_1,
+    12 : vs3_2,
+    #13: Not connected
+    14 : vs3_3,
+    15 : vs3_4,
+    16 : vs4_1,
+    17 : vs4_2,
+    #18: GND
+    19 : vs4_3,
+    20 : vs4_4,
+    21 : vs5_1,
+    22 : vs5_2,
+    #23: GND
+    24 : vs5_3,
+    25 : vs5_4}
 
 
 @handler.register_command('*IDN?', "Returns the device identification string")
 def identify():
-    return f"BrickVS module by Adam McCaughan, version {__version__} ({__date__})"
+    """ Note, when connecting to multiple bricks, it is much easier to identify the brick by their unique
+    serial number to establish a connection. This is beacuse the com number and a Visa ASRL number do not
+    always match. """
+    return f"TODO, REPLACE WITH SERIAL NUMBER"
+
+
+
+@handler.register_command('CRED?', "Returns the string crediting Adam for his desing")
+def identify():
+    f"Super-Brick module by Adam McCaughan, Gus Swansen, version {__version__} ({__date__})"
 
 
 @handler.register_command('*RST', "Resets the voltage to 0V and disables the output")

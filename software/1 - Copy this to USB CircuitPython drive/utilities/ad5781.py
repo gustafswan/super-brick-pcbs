@@ -43,20 +43,20 @@ IDX_RBUF = (22,23)
 
 class AD5781:
     def __init__(self,
-                 spi_clock_speed,
-                 relay_pin,
-                 spi_clock_pin,
-                 spi_mosi_pin,
-                 spi_miso_pin,
-                 spi_cs_pin):
+                 clk_speed,
+                 out_en,
+                 sclk,
+                 sdin,
+                 sdo,
+                 cs):
             
-        self.relay = digitalio.DigitalInOut(relay_pin)
+        self.relay = digitalio.DigitalInOut(out_en)
         self.relay.direction = digitalio.Direction.OUTPUT
         self.relay.value = False
         # Create the SPI device
-        spi_bus = busio.SPI(spi_clock_pin, spi_mosi_pin, spi_miso_pin)
-        self.spi = SPIDevice(spi_bus, digitalio.DigitalInOut(spi_cs_pin), cs_active_value = False,
-                             baudrate = spi_clock_speed, phase = 0, polarity = 1)
+        spi_bus = busio.SPI(sclk, sdin, sdo)
+        self.spi = SPIDevice(spi_bus, digitalio.DigitalInOut(cs), cs_active_value = False,
+                             baudrate = clk_speed, phase = 0, polarity = 1)
         # Setup the DAC to work properly in the gain-of-two configuration
         self.write_control_register(lincomp_20v = True, sdo_disable = False, binary_coding = True, dac_tristate = False, ground_clamp = False, rbuf = False)
         self.set_dac_voltage(0)
@@ -151,18 +151,16 @@ class AD5781:
         return self.relay.value
 
 
-
-
 if __name__ == "__main__":
     # Example usage
 
     vs = AD5781(
-        spi_clock_speed = 1000000,
-        relay_pin = board.GP11,
-        spi_clock_pin =  board.GP2,
-        spi_mosi_pin =  board.GP3,
-        spi_miso_pin =  board.GP0,
-        spi_cs_pin =  board.GP1)
+        clk_speed = 1000000,
+        out_en = board.GP11,
+        sclk =  board.GP2,
+        sdin =  board.GP3,
+        sdo =  board.GP0,
+        cs =  board.GP1)
 
     print(vs.read_control_register())
     result = vs.write_control_register(lincomp_20v = True, sdo_disable = False, binary_coding = True, dac_tristate = False, ground_clamp = False, rbuf = False)
